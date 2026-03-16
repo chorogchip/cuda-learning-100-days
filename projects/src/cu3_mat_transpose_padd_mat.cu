@@ -6,7 +6,7 @@ __global__ void kernel_mat_transpose(float* res, const float* src, int n) {
     int idx_y = blockIdx.y * blockDim.y + threadIdx.y;
 
     if (idx_x < n && idx_y < n) {
-        res[idx_y * n + idx_x] = src[idx_x * n + idx_y];
+        res[idx_y * (n+1) + idx_x] = src[idx_x * (n+1) + idx_y];
     }
 }
 
@@ -27,7 +27,7 @@ int main(int argc, const char** argv) {
         exit(1);
     }
 
-    size_t bytes = (size_t)n * n * sizeof(float);
+    size_t bytes = (size_t)n * (n+1) * sizeof(float);
 
     float *h_d, *h_s;
     h_d = (float*)malloc(bytes);
@@ -35,7 +35,7 @@ int main(int argc, const char** argv) {
 
     for (int yy = 0; yy < n; ++yy) {
         for (int xx = 0; xx < n; ++xx) {
-            h_s[yy * n + xx] = (float)rand() / (float)RAND_MAX;
+            h_s[yy * (n+1) + xx] = (float)rand() / (float)RAND_MAX;
         }
     }
 
@@ -54,7 +54,7 @@ int main(int argc, const char** argv) {
 
     for (int yy = 0; yy < n; ++yy) {
         for (int xx = 0; xx < n; ++xx) {
-            if (h_d[yy * n + xx] != h_s[xx * n + yy]) {
+            if (h_d[yy * (n+1) + xx] != h_s[xx * (n+1) + yy]) {
                 fprintf(stderr, "Validation Failed\n");
                 exit(1);
             }
