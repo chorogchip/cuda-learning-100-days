@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # y = READPERTHREAD, x = BLOCKDIM
-for y in 1 2 4 8
+for y in 1 2 4 8 16 32
 do
     for x in 64 128 256 512 1024
     do
@@ -9,7 +9,7 @@ do
         
         if [ -f "$BIN" ]; then
             echo "Executing: $BIN"
-            ./range_run.sh "$BIN" -st 8 -fn 27
+            ./range_run.sh "$BIN" -st 8 -fn 28
         else
             echo "Error: $BIN not found"
         fi

@@ -148,15 +148,17 @@ day 6 : fixing reduction
     
     Observation
         throughput maximized at memory footprint 32MB (L2 cache):
-            on N=2^23 blockDim=128 read_per_thread=8,
-            316 GElem/s = 1264 GB/s
+            on N=2^23 blockDim=64 read_per_thread=32,
+            412 GElem/s = 1648 GB/s
         after L2, it makes plateau at almost close to DRAM bw right away
 
     Interpretation
         read_per_thread > 1 really works!
-            rpc=INF makes kernel perfect coalesced memory read (block-strided)
+            more rpc, more close to roofline
+            - cause rpc=INF makes kernel perfect coalesced memory read
+                (block-strided)
         reached memory bandwidth plateau!
-            106.7 GElem/s = 426.8 GB/s = 95.2% of peak mem bw roofline!!!
+            107 GElem/s = 428 GB/s = 95.5% of peak mem bw roofline!!!
         blockdim is not that important
             block dim 128, 256, 512 works well
             block dim 1024 works bad (by low occupancy!)
@@ -168,6 +170,10 @@ day 6 : fixing reduction
         warp-unrolled, __shfl_down_sync()
             for optimizing in small memory size
     
+day 7: complete reduction
+
+    What I did
+        made complete reduction to 1
 
         
 

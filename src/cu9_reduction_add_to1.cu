@@ -1,8 +1,16 @@
 #include <iostream>
+#include <algorithm>
 #include <cuda_runtime.h>
 
+unsigned long long quick_rand64(unsigned long long* state) {
+    *state ^= *state << 13;
+    *state ^= *state >> 7;
+    *state ^= *state << 17;
+    return *state;
+}
 
-__global__ void kernel_reduce_sum(float* dest, const float* src, int n) {
+__global__ void kernel_reduce_sum_partial(
+        float* dest, const float* src, int n) {
 
     float local_sum = 0.0f;
 
@@ -50,28 +58,45 @@ int main(int argc, const char** argv) {
     h_a = (float*)malloc(bytes);
     h_b = (float*)malloc(bytes);
 
-    for (size_t i = 0; i < n; ++i)
-        h_a[i] = (float)rand() / (float)RAND_MAX;
+
+    static unsigned long long seed = 88172645463325252ULL;
+    for (size_t i = 0; i < n; ++i) {
+        unsigned long long r = quick_rand64(&seed);
+
+        if ((r % n) < 10000)
+            h_a[i] = (float)rand() / (float)RAND_MAX;
+        else
+            h_a[i] = 0.0f;
+    }
 
     float *d_a, *d_b;
     cudaMalloc(&d_a, bytes);
     cudaMalloc(&d_b, bytes);
 
     cudaMemcpy(d_a, h_a, bytes, cudaMemcpyHostToDevice);
-    
-    const size_t blk_cnt = (n + MY_BLOCKDIM - 1U) / MY_BLOCKDIM;
 
-    kernel_reduce_sum_partial<<<blk_cnt, MY_BLOCKDIM>>>(d_b, d_a, n);
-    
-    cudaMemcpy(h_b, d_b, bytes, cudaMemcpyDeviceToHost);
+    size_t read_per_block = (size_t)(MY_BLOCKDIM) * (size_t)(MY_READPERTHREAD);
 
-    float sum_ans = 0.0f;
-    float sum_res = 0.0f;
+    {
+        size_t rem_data = n;
 
-    for (size_t i = 0; i < n; ++i) sum_ans += h_a[i];
-    for (size_t i = 0; i < blk_cnt; ++i) sum_res += h_b[i];
+        do {
+            size_t blk_cnt = (rem_data + read_per_block - 1) / read_per_block;
+            kernel_reduce_sum_partial<<<blk_cnt, MY_BLOCKDIM>>>(d_b, d_a, rem_data);
+            std::swap(d_b, d_a);
+            rem_data /= read_per_block;
+        } while (rem_data > 1);
+    }
     
-    if (std::abs(sum_ans - sum_res) > 0.0001f * (float)n) {
+    cudaMemcpy(h_b, d_a, sizeof(float), cudaMemcpyDeviceToHost);
+
+    float sum_ans = 0.0;
+    float sum_res = 0.0;
+
+    for (int i = 0; i < n; ++i) sum_ans += h_a[i];
+    sum_res = h_b[0];
+    
+    if (std::abs((double)sum_ans - (double)sum_res) > 0.000001 * (double)n) {
         fprintf(stderr, "Validation Failed, ans:[%f] res:[%f]\n", sum_ans, sum_res);
         exit(1);
     }
@@ -85,9 +110,15 @@ int main(int argc, const char** argv) {
     const int iter_cnt = 10;
     for (int iter = 0; iter < iter_cnt; ++iter) {
 
+        size_t rem_data = n;
         cudaEventRecord(start);
         
-        kernel_reduce_sum_partial<<<blk_cnt, MY_BLOCKDIM>>>(d_b, d_a, n);
+        do {
+            size_t blk_cnt = (rem_data + read_per_block - 1) / read_per_block;
+            kernel_reduce_sum_partial<<<blk_cnt, MY_BLOCKDIM>>>(d_b, d_a, rem_data);
+            std::swap(d_a, d_b);
+            rem_data /= read_per_block;
+        } while (rem_data > 1);
 
         cudaEventRecord(stop);
 
