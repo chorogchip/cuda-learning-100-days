@@ -1,21 +1,27 @@
-N=2^8  = 256       95124851.671882  256 - 2
-N=2^9  = 512       195360196.043260 256 - 2
-N=2^10 = 1024      373395566.325520 256 - 8
-N=2^11 = 2048      720720718.849534 512 - 4
-N=2^12 = 4096      1123792793.556637 256 - 16
-N=2^13 = 8192      2064516144.844390 512 - 16
-N=2^14 = 16384     4210526326.420031 64 - 2
-N=2^15 = 32768     7366906410.270298 64 - 4
-N=2^16 = 65536     15215452978.608675 256 - 4
-N=2^17 = 131072    27769491439.288940 128 - 4
-N=2^18 = 262144    53647675423.380516 64 - 8
-N=2^19 = 524288    97523810297.994125 128 - 32
-N=2^20 = 1048576   158529269933.948395 256 - 32
-N=2^21 = 2097152   244446105025.721680 64 - 32
-N=2^22 = 4194304   314396738389.108887 256 - 32
-N=2^23 = 8388608   389226428947.774780 128 - 32
-N=2^24 = 16777216  103526252761.332367 512 - 32
-N=2^25 = 33554432  105427965364.510925 512 - 32
-N=2^26 = 67108864  106170934222.694611 512 - 32
-N=2^27 = 134217728 106652564558.896500 512 - 64
-N=2^28 = 268435456 106902236860.665680 512 - 64
+Total rows: 735
+
+Best config per N:
+N=256       (2^8 )  best: block=256  v=4   throughput=0.098 G  time=0.026144 ms
+N=512       (2^9 )  best: block=256  v=4   throughput=0.184 G  time=0.027808 ms
+N=1024      (2^10)  best: block=256  v=4   throughput=0.370 G  time=0.027712 ms
+N=2048      (2^11)  best: block=256  v=8   throughput=0.697 G  time=0.029376 ms
+N=4096      (2^12)  best: block=512  v=8   throughput=1.091 G  time=0.037536 ms
+N=8192      (2^13)  best: block=64   v=2   throughput=2.140 G  time=0.038272 ms
+N=16384     (2^14)  best: block=512  v=32  throughput=4.080 G  time=0.040160 ms
+N=32768     (2^15)  best: block=64   v=4   throughput=7.591 G  time=0.043168 ms
+N=65536     (2^16)  best: block=128  v=8   throughput=14.153 G  time=0.046304 ms
+N=131072    (2^17)  best: block=128  v=4   throughput=27.902 G  time=0.046976 ms
+N=262144    (2^18)  best: block=128  v=16  throughput=53.718 G  time=0.048800 ms
+N=524288    (2^19)  best: block=256  v=16  throughput=95.645 G  time=0.054816 ms
+N=1048576   (2^20)  best: block=128  v=32  throughput=161.181 G  time=0.065056 ms
+N=2097152   (2^21)  best: block=128  v=16  throughput=247.119 G  time=0.084864 ms
+N=4194304   (2^22)  best: block=64   v=32  throughput=313.494 G  time=0.133792 ms
+N=8388608   (2^23)  best: block=128  v=32  throughput=388.880 G  time=0.215712 ms
+N=16777216  (2^24)  best: block=256  v=32  throughput=103.539 G  time=1.620384 ms
+N=33554432  (2^25)  best: block=512  v=16  throughput=105.445 G  time=3.182176 ms
+N=67108864  (2^26)  best: block=512  v=32  throughput=106.183 G  time=6.320128 ms
+N=134217728 (2^27)  best: block=512  v=64  throughput=106.667 G  time=12.582816 ms
+N=268435456 (2^28)  best: block=512  v=64  throughput=106.882 G  time=25.115008 ms
+
+Saved CSV: plot_cu9/parsed.csv
+Saved plots under: plot_cu9

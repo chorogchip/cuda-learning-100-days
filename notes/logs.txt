@@ -174,6 +174,39 @@ day 7: complete reduction
 
     What I did
         made complete reduction to 1
+        made compiling and running script
+        add plotting python script
+
+    Observation
+        on N=2^23 blockdim=128 read_per_thread=32,
+            388 GElem/s = 1552 GB/s
+        after L2, it makes plateau again!
+
+    Interpretation
+        plateau: 107 GElem/s = 428 GB/s = 95.5%!
+        reducing to elem 1 do not make kernel slower!
+
+    Conclusion
+        in this case, i don't need __shfl_down_sync! (good coalesced mem read)
+        so let's go to next step: prefix sum!
+
+day 8: prefix scan
+
+    What I did
+        seperated repetitive code to seperated files
+        started to write prefix sum code
+
+    Approach
+        warp-level prefix scan: add offset -1, add offset -2, -4, -8, -16
+            __sync_threads() can be used, but __shfl_up_sync would be better
+        block-level prefix scan: 1 block = 1024 thread = 32 thread * 32 warp
+            final thread of warp writes to shared mem, then __sync_threads()
+            one warp does prefix scan of blocks, then __sync_threads()
+            all threads in blocks gets shared mem, adds to itself
+        global-level prefix scan:
+            same fractal like structure.
+
+day 9: prefix scan kernel
 
         
 
