@@ -6,6 +6,7 @@ unsigned long long my_rand64();
 float* gen_sparse_buf(size_t n);
 
 // MY_BLOCKDIM
+// MY_RPT: read per thread
 #define WARP_P_BLOCK ((MY_BLOCKDIM) >> 5)
 
 __global__ void kernel_prefix(float* dest_blocksums, float* dest_partial, const float* src, size_t n) {

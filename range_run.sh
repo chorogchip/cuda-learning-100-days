@@ -26,10 +26,8 @@ if [ ! -f "$TARGET_BIN" ]; then
     exit 1
 fi
 
-for (( i=$START; i<=$FINISH; i++ ))
-do
+for (( i=$START; i<=$FINISH; i++ )); do
     SIZE=$((1 << i))
-
-    RESULT=$("$TARGET_BIN" "$SIZE")
-    printf "%30s | N = 2^%-2d = %-10d\n" "$RESULT" "$i" "$SIZE"
+    "$TARGET_BIN" "$SIZE"
 done
+

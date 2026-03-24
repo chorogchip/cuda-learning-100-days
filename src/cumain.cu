@@ -19,6 +19,12 @@ int main(int argc, const char** argv) {
         exit(1);
     }
 
+    size_t logn = 0;
+    {
+        size_t nn = 1;
+        while (nn < n) { logn++, nn <<= 1U; }
+    }
+
     if (n <= 0) {
         fprintf(stderr, "Error: invalid n: [%zu]", n);
         exit(1);
@@ -58,7 +64,7 @@ int main(int argc, const char** argv) {
 
     size_t flop = get_flop() * (size_t)iter_cnt;
     double flops = (double)flop * 1000.0 / mili;
-    printf("%.6f %.6f\n", flops, mili);
+    printf("%30s,%12zu,%2zu,%18.6f,%14.6f\n", argv[0], n, logn, flops, mili);
 
     clear_problem();
             
